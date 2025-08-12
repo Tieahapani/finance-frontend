@@ -84,7 +84,7 @@ function App() {
       const monthString = `${selectedDate.getFullYear()}-${String(
         selectedDate.getMonth() + 1
       ).padStart(2, "0")}`;
-      const res = await fetch('${BASE}/calculate', {
+      const res = await fetch(`${BASE}/calculate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ month: monthString, categories: totals }),
