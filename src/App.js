@@ -2,7 +2,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
-import "./App.css";
+import "./App.css"; 
+
+const BASE = process.env.REACT_APP_API_BASE_URL || "http://localhost:5001";
 
 function App() {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -82,7 +84,7 @@ function App() {
       const monthString = `${selectedDate.getFullYear()}-${String(
         selectedDate.getMonth() + 1
       ).padStart(2, "0")}`;
-      const res = await fetch("http://localhost:5001/calculate", {
+      const res = await fetch('${BASE}/calculate', {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ month: monthString, categories: totals }),
