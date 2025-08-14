@@ -211,6 +211,13 @@ html, body {
   text-align: center;
 }
 
+input[type="number"],
+input[type="text"], 
+.category-total input, 
+.new-category input {
+  font-size: 16px; 
+}
+
 /* 11) Responsive layout for phones */
 @media (max-width: 768px) {
   .container {
