@@ -210,3 +210,50 @@ html, body {
   border-radius: 6px;
   text-align: center;
 }
+
+/* 11) Responsive layout for phones */
+@media (max-width: 768px) {
+  .container {
+    grid-template-columns: 1fr;  /* stack sidebar + main vertically */
+    height: auto;
+    padding: 1rem;
+  }
+
+  .sidebar,
+  .main {
+    width: 100%;
+    max-width: none;
+  }
+
+  .new-category {
+    flex-direction: column;
+  }
+
+  .new-category input,
+  .new-category button,
+  .calculate-row button {
+    width: 100%;
+  }
+
+  .category-list {
+    grid-template-columns: 1fr;  /* 1 card per row */
+    gap: 1rem;
+  }
+
+  .result,
+  .error {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .main-header h1 {
+    font-size: 1.5rem;
+    text-align: center;
+  }
+
+  .subtitle {
+    text-align: center;
+  }
+}
+
