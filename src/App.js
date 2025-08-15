@@ -32,7 +32,7 @@ function App() {
 
     rows.push({ Category: "Total", Amount: monthlyTotal}); 
 
-    const worksheet = XLSX.utlils.json_to_sheet(rows); 
+    const worksheet = XLSX.utils.json_to_sheet(rows); 
     const workbook = XLSX.utils.book_new(); 
     XLSX.utils.book_append_sheet(workbook, worksheet, "Budget");
 
