@@ -1,5 +1,7 @@
 // App.js
 import React, { useState, useEffect, useRef } from "react";
+import * as XLSX from "xlsx"; 
+import {saveAs} from "file-saver"; 
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import "./App.css"; 
@@ -18,6 +20,27 @@ function App() {
   const [error, setError] = useState(null);
   const inputRefs = useRef({});
   const [lastAdded, setLastAdded] = useState({ category: null, index: null });
+
+  const exportToExcel = () => {
+    if (!monthlyTotal) return; 
+
+    const rows = Object.entries(categoryTotals).map(([category, amount]) => ({
+      Category: category, 
+      Amount: amount, 
+
+    })); 
+
+    rows.push({ Category: "Total", Amount: monthlyTotal}); 
+
+    const worksheet = XLSX.utlils.json_to_sheet(rows); 
+    const workbook = XLSX.utils.book_new(); 
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Budget");
+
+    const monthStr = selectedDate.toLocaleString("default", {month: "long", year: "numeric", }).replace(" ", "-"); 
+    const excelBuffer = XLSX.write(workbook, {bookType: "xlsx", type: "array"}); 
+    const blob = new Blob([excelBuffer], {type: "application/octet-stream"})
+    saveAs(blob, `Budget-${monthStr}.xlsx`); 
+  }; 
 
   useEffect(() => {
     const totals = {};
@@ -194,7 +217,13 @@ function App() {
             <div className="result">
               ✅ {fmtMonth(selectedDate)} Total: ${monthlyTotal}
             </div>
-          )}
+            )} 
+
+          {monthlyTotal !== null && (
+            <button onClick={exportToExcel} style={{marginTop: "1rem"}}>
+               📥 Export to Excel
+            </button>
+          )} 
           {error && <div className="error">❌ {error}</div>}
         </div>
       </main>
