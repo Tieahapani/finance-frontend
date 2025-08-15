@@ -1,19 +1,16 @@
 // App.js
 import React, { useState, useEffect, useRef } from "react";
-import * as XLSX from "xlsx"; 
-import {saveAs} from "file-saver"; 
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
-import "./App.css"; 
+import "./App.css";
 
 const BASE = process.env.REACT_APP_API_BASE_URL || "http://localhost:5001";
 
 function App() {
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [categories, setCategories] = useState({
-    Personal: [""],
-    Common: [""],
-  });
+  const [categories, setCategories] = useState({ Personal: [""], Common: [""] });
   const [newCategory, setNewCategory] = useState("");
   const [categoryTotals, setCategoryTotals] = useState({});
   const [monthlyTotal, setMonthlyTotal] = useState(null);
@@ -22,25 +19,26 @@ function App() {
   const [lastAdded, setLastAdded] = useState({ category: null, index: null });
 
   const exportToExcel = () => {
-    if (!monthlyTotal) return; 
+    if (!monthlyTotal) return;
 
     const rows = Object.entries(categoryTotals).map(([category, amount]) => ({
-      Category: category, 
-      Amount: amount, 
+      Category: category,
+      Amount: `$${amount.toFixed(2)}`,
+    }));
 
-    })); 
+    rows.push({ Category: "Total", Amount: `$${monthlyTotal.toFixed(2)}` });
 
-    rows.push({ Category: "Total", Amount: monthlyTotal}); 
-
-    const worksheet = XLSX.utils.json_to_sheet(rows); 
-    const workbook = XLSX.utils.book_new(); 
+    const worksheet = XLSX.utils.json_to_sheet(rows);
+    const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Budget");
 
-    const monthStr = selectedDate.toLocaleString("default", {month: "long", year: "numeric", }).replace(" ", "-"); 
-    const excelBuffer = XLSX.write(workbook, {bookType: "xlsx", type: "array"}); 
-    const blob = new Blob([excelBuffer], {type: "application/octet-stream"})
-    saveAs(blob, `Budget-${monthStr}.xlsx`); 
-  }; 
+    const monthStr = selectedDate
+      .toLocaleString("default", { month: "long", year: "numeric" })
+      .replace(" ", "-");
+    const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+    const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
+    saveAs(blob, `Budget-${monthStr}.xlsx`);
+  };
 
   useEffect(() => {
     const totals = {};
@@ -129,7 +127,6 @@ function App() {
 
   return (
     <div className="container">
-      {/* Sidebar */}
       <aside className="sidebar">
         <h2>📅 Select Month</h2>
         <Calendar
@@ -138,15 +135,14 @@ function App() {
           view="month"
           showNavigation
           className="calendar-widget"
-          onActiveStartDateChange={({ activeStartDate, view}) => {
+          onActiveStartDateChange={({ activeStartDate, view }) => {
             if (view === "month") {
-              setSelectedDate(activeStartDate); 
+              setSelectedDate(activeStartDate);
             }
           }}
         />
       </aside>
 
-      {/* Main */}
       <main className="main">
         <header className="main-header">
           <h1>📊 Monthly Budget Planner</h1>
@@ -171,39 +167,37 @@ function App() {
                 <button onClick={() => removeCategory(cat)}>🗑️</button>
               </h3>
               {items.map((val, idx) => (
-                <input
-                  key={idx}
-                  type="number"
-                  placeholder={`Item ${idx + 1}`}
-                  value={val}
-                  onChange={e => handleItemChange(cat, idx, e.target.value)}
-                  onKeyDown={e => {
-                    if (e.key === "Enter" && idx === items.length - 1) {
-                      e.preventDefault();
-                      addItemToCategory(cat);
-                    }
-                  }}
-                  onKeyUp={e => {
-                    if (
-                      e.key === "Backspace" &&
-                      e.target.value === "" &&
-                      items.length > 1
-                    ) {
-                      removeItemFromCategory(cat, idx);
-                    }
-                  }}
-                  ref={el => {
-                    if (!inputRefs.current[cat]) inputRefs.current[cat] = [];
-                    inputRefs.current[cat][idx] = el;
-                  }}
-                />
+                <div className="input-with-dollar" key={idx}>
+                  <input
+                    type="number"
+                    placeholder={`Item ${idx + 1}`}
+                    value={val}
+                    onChange={e => handleItemChange(cat, idx, e.target.value)}
+                    onKeyDown={e => {
+                      if (e.key === "Enter" && idx === items.length - 1) {
+                        e.preventDefault();
+                        addItemToCategory(cat);
+                      }
+                    }}
+                    onKeyUp={e => {
+                      if (
+                        e.key === "Backspace" &&
+                        e.target.value === "" &&
+                        items.length > 1
+                      ) {
+                        removeItemFromCategory(cat, idx);
+                      }
+                    }}
+                    ref={el => {
+                      if (!inputRefs.current[cat]) inputRefs.current[cat] = [];
+                      inputRefs.current[cat][idx] = el;
+                    }}
+                  />
+                </div>
               ))}
               <div className="category-total">
                 <span>Total:</span>
-                <input
-                  readOnly
-                  value={categoryTotals[cat] || 0}
-                />
+                <input readOnly value={categoryTotals[cat] || 0} />
               </div>
             </div>
           ))}
@@ -211,19 +205,21 @@ function App() {
 
         <div className="calculate-row">
           <button onClick={calculateMonthlyTotal}>
-             📅 Calculate for {fmtMonth(selectedDate)}
+            📅 Calculate for {fmtMonth(selectedDate)}
           </button>
+
           {monthlyTotal !== null && (
             <div className="result">
               ✅ {fmtMonth(selectedDate)} Total: ${monthlyTotal}
             </div>
-            )} 
+          )}
 
           {monthlyTotal !== null && (
-            <button onClick={exportToExcel} style={{marginTop: "1rem"}}>
-               📥 Export to Excel
+            <button onClick={exportToExcel} style={{ marginTop: "1rem" }}>
+              📥 Export to Excel
             </button>
-          )} 
+          )}
+
           {error && <div className="error">❌ {error}</div>}
         </div>
       </main>
