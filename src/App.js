@@ -92,7 +92,7 @@ function App() {
     setCategories(prev => {
       const copy = { ...prev };
       delete copy[category];
-      return Object.keys(copy).length ? copy : { Personal: [""] };
+      return Object.keys(copy).length ? copy : {  };
     });
   };
 
