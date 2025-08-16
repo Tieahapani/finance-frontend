@@ -10,7 +10,7 @@ const BASE = process.env.REACT_APP_API_BASE_URL || "http://localhost:5001";
 
 function App() {
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [categories, setCategories] = useState({ Personal: [""], Common: [""] });
+  const [categories, setCategories] = useState({ });
   const [newCategory, setNewCategory] = useState("");
   const [categoryTotals, setCategoryTotals] = useState({});
   const [monthlyTotal, setMonthlyTotal] = useState(null);
