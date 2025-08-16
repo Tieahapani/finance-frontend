@@ -10,23 +10,24 @@ const BASE = process.env.REACT_APP_API_BASE_URL || "http://localhost:5001";
 
 function App() {
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [categories, setCategories] = useState({ });
+  const [categories, setCategories] = useState({});
   const [newCategory, setNewCategory] = useState("");
   const [categoryTotals, setCategoryTotals] = useState({});
   const [monthlyTotal, setMonthlyTotal] = useState(null);
   const [error, setError] = useState(null);
   const inputRefs = useRef({});
   const [lastAdded, setLastAdded] = useState({ category: null, index: null });
+  const [currency, setCurrency] = useState("$");
 
   const exportToExcel = () => {
     if (!monthlyTotal) return;
 
     const rows = Object.entries(categoryTotals).map(([category, amount]) => ({
       Category: category,
-      Amount: `$${amount.toFixed(2)}`,
+      Amount: `${currency}${amount.toFixed(2)}`,
     }));
 
-    rows.push({ Category: "Total", Amount: `$${monthlyTotal.toFixed(2)}` });
+    rows.push({ Category: "Total", Amount: `${currency}${monthlyTotal.toFixed(2)}` });
 
     const worksheet = XLSX.utils.json_to_sheet(rows);
     const workbook = XLSX.utils.book_new();
@@ -92,7 +93,7 @@ function App() {
     setCategories(prev => {
       const copy = { ...prev };
       delete copy[category];
-      return Object.keys(copy).length ? copy : {  };
+      return Object.keys(copy).length ? copy : {};
     });
   };
 
@@ -141,6 +142,17 @@ function App() {
             }
           }}
         />
+
+        <div className="currency-selector">
+          <label>Select Currency: </label>
+          <select value={currency} onChange={(e) => setCurrency(e.target.value)}>
+            <option value="$">USD ($)</option>
+            <option value="€">EUR (€)</option>
+            <option value="₹">INR (₹)</option>
+            <option value="£">GBP (£)</option>
+            <option value="¥">JPY (¥)</option>
+          </select>
+        </div>
       </aside>
 
       <main className="main">
@@ -167,7 +179,7 @@ function App() {
                 <button onClick={() => removeCategory(cat)}>🗑️</button>
               </h3>
               {items.map((val, idx) => (
-                <div className="input-with-dollar" key={idx}>
+                <div className="input-with-currency" key={idx} data-currency={currency}>
                   <input
                     type="number"
                     placeholder={`Item ${idx + 1}`}
@@ -197,7 +209,7 @@ function App() {
               ))}
               <div className="category-total">
                 <span>Total:</span>
-                <input readOnly value={categoryTotals[cat] || 0} />
+                <input readOnly value={`${currency}${categoryTotals[cat] || 0}`} />
               </div>
             </div>
           ))}
@@ -210,7 +222,7 @@ function App() {
 
           {monthlyTotal !== null && (
             <div className="result">
-              ✅ {fmtMonth(selectedDate)} Total: ${monthlyTotal}
+              ✅ {fmtMonth(selectedDate)} Total: {currency}{monthlyTotal}
             </div>
           )}
 
@@ -228,3 +240,4 @@ function App() {
 }
 
 export default App;
+
