@@ -22,24 +22,19 @@ function App() {
   const [monthA, setMonthA] = useState("");
   const [monthB, setMonthB] = useState("");
   const [monthlyData, setMonthlyData] = useState({});
+  const [showSummary, setShowSummary] = useState(false);
 
   const exportToExcel = () => {
     if (!monthlyTotal) return;
-
     const rows = Object.entries(categoryTotals).map(([category, amount]) => ({
       Category: category,
       Amount: `${currency}${amount.toFixed(2)}`,
     }));
-
     rows.push({ Category: "Total", Amount: `${currency}${monthlyTotal.toFixed(2)}` });
-
     const worksheet = XLSX.utils.json_to_sheet(rows);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Budget");
-
-    const monthStr = selectedDate
-      .toLocaleString("default", { month: "long", year: "numeric" })
-      .replace(" ", "-");
+    const monthStr = selectedDate.toLocaleString("default", { month: "long", year: "numeric" }).replace(" ", "-");
     const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
     const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
     saveAs(blob, `Budget-${monthStr}.xlsx`);
@@ -107,9 +102,7 @@ function App() {
       for (const [cat, items] of Object.entries(categories)) {
         totals[cat] = items.reduce((sum, v) => sum + (parseFloat(v) || 0), 0);
       }
-      const monthKey = `${selectedDate.getFullYear()}-${String(
-        selectedDate.getMonth() + 1
-      ).padStart(2, "0")}`;
+      const monthKey = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, "0")}`;
       const res = await fetch(`${BASE}/calculate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -258,28 +251,40 @@ function App() {
             </div>
           )}
 
-          <div className="monthly-comparison-selector">
-            <label>Select Month A:</label>
-            <select value={monthA} onChange={(e) => setMonthA(e.target.value)}>
-              <option value="">-- Choose Month --</option>
-              {Object.keys(monthlyData).map(month => (
-                <option key={month} value={month}>{month}</option>
-              ))}
-            </select>
+          <button
+            onClick={() => setShowSummary(!showSummary)}
+            className="generate-summary-button"
+            style={{ marginTop: "1rem" }}
+          >
+            {showSummary ? "Hide Summary" : "📊 Generate Summary"}
+          </button>
 
-            <label style={{ marginLeft: "1rem" }}>Select Month B:</label>
-            <select value={monthB} onChange={(e) => setMonthB(e.target.value)}>
-              <option value="">-- Choose Month --</option>
-              {Object.keys(monthlyData).map(month => (
-                <option key={month} value={month}>{month}</option>
-              ))}
-            </select>
-          </div>
+          {showSummary && (
+            <div className="summary-section">
+              <div className="monthly-comparison-selectors">
+                <label>Select Month A:</label>
+                <select value={monthA} onChange={(e) => setMonthA(e.target.value)}>
+                  <option value="">-- Choose Month --</option>
+                  {Object.keys(monthlyData).map(month => (
+                    <option key={month} value={month}>{month}</option>
+                  ))}
+                </select>
 
-          {monthA && monthB && (
-            <div className="comparison-bar-chart">
-              <h4>📊 Comparing {monthA} vs {monthB}</h4>
-              <Bar data={barComparisonData} />
+                <label style={{ marginLeft: "1rem" }}>Select Month B:</label>
+                <select value={monthB} onChange={(e) => setMonthB(e.target.value)}>
+                  <option value="">-- Choose Month --</option>
+                  {Object.keys(monthlyData).map(month => (
+                    <option key={month} value={month}>{month}</option>
+                  ))}
+                </select>
+              </div>
+
+              {monthA && monthB && (
+                <div className="comparison-bar-chart">
+                  <h4>📊 Comparing {monthA} vs {monthB}</h4>
+                  <Bar data={barComparisonData} />
+                </div>
+              )}
             </div>
           )}
 
