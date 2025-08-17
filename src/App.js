@@ -1,7 +1,7 @@
 // App.js
 import React, { useState, useEffect, useRef } from "react";
 import * as XLSX from "xlsx";
-import {Bar} from "react-chartsjs-2";
+import {Bar} from "react-chartjs-2";
 import { saveAs } from "file-saver";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
