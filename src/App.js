@@ -1,4 +1,3 @@
-// App.js
 import React, { useState, useEffect, useRef } from "react";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
@@ -230,7 +229,7 @@ function App() {
 
           <button
             onClick={() => navigate("/summary", {
-              state: {monthlyData, currency}
+              state: { monthlyData, currency }
             })}
             className="generate-summary-button"
             style={{ marginTop: "1rem" }}

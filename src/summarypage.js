@@ -1,19 +1,19 @@
-import React from "react"; 
-import {Bar} from "react-chartjs-2";
-import { useNavigate, useLocation } from "react-router-dom"; 
+import React from "react";
+import { Bar } from "react-chartjs-2";
+import { useNavigate, useLocation } from "react-router-dom";
 
 function SummaryPage() {
-    const navigate = useNavigate();
-    const location = useLocation();
-    const { monthlyData, currency} = location.state || {}; 
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { monthlyData, currency } = location.state || {};
 
-    const months = Object.keys(monthlyData || {}).sort();
+  const months = Object.keys(monthlyData || {}).sort();
   const monthA = months[months.length - 2];
   const monthB = months[months.length - 1];
 
   if (!monthA || !monthB) {
     return (
-      <div className="summary-page">
+      <div className="summary-page" style={{ padding: "2rem" }}>
         <h2>📊 Monthly Summary</h2>
         <p>Not enough months calculated yet. Please go back and calculate at least 2 months.</p>
         <button onClick={() => navigate("/")}>⬅ Back to Planner</button>
@@ -44,8 +44,10 @@ function SummaryPage() {
 
   return (
     <div className="summary-page" style={{ padding: "2rem" }}>
-      <button onClick={() => navigate("/")} style={{ marginBottom: "1.5rem" }}>⬅ Back to Planner</button>
-      <h2>📊 Monthly Summary</h2>
+      <button onClick={() => navigate("/")} style={{ marginBottom: "1.5rem" }}>
+        ⬅ Back to Planner
+      </button>
+      <h2>📊 Monthly Summary: {monthA} vs {monthB}</h2>
 
       <div style={{ maxWidth: "100%", marginTop: "2rem" }}>
         <Bar data={barData} />
@@ -61,7 +63,6 @@ function SummaryPage() {
       </ul>
     </div>
   );
-
 }
 
-export default SummaryPage; 
+export default SummaryPage;
