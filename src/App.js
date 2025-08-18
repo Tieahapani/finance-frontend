@@ -1,8 +1,8 @@
 // App.js
 import React, { useState, useEffect, useRef } from "react";
 import * as XLSX from "xlsx";
-import { Bar } from "react-chartjs-2";
 import { saveAs } from "file-saver";
+import { useNavigate } from "react-router-dom";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import "./App.css";
@@ -19,10 +19,8 @@ function App() {
   const inputRefs = useRef({});
   const [lastAdded, setLastAdded] = useState({ category: null, index: null });
   const [currency, setCurrency] = useState("$");
-  const [monthA, setMonthA] = useState("");
-  const [monthB, setMonthB] = useState("");
   const [monthlyData, setMonthlyData] = useState({});
-  const [showSummary, setShowSummary] = useState(false);
+  const navigate = useNavigate();
 
   const exportToExcel = () => {
     if (!monthlyTotal) return;
@@ -130,27 +128,6 @@ function App() {
   const fmtMonth = date =>
     date.toLocaleString("default", { month: "long", year: "numeric" });
 
-  const labels = Array.from(new Set([
-    ...Object.keys(monthlyData[monthA]?.categories || {}),
-    ...Object.keys(monthlyData[monthB]?.categories || {})
-  ]));
-
-  const barComparisonData = {
-    labels,
-    datasets: [
-      {
-        label: monthA,
-        backgroundColor: "rgba(59, 130, 246, 0.7)",
-        data: labels.map(cat => monthlyData[monthA]?.categories[cat] || 0)
-      },
-      {
-        label: monthB,
-        backgroundColor: "rgba(239, 68, 68, 0.7)",
-        data: labels.map(cat => monthlyData[monthB]?.categories[cat] || 0)
-      }
-    ]
-  };
-
   return (
     <div className="container">
       <aside className="sidebar">
@@ -252,41 +229,14 @@ function App() {
           )}
 
           <button
-            onClick={() => setShowSummary(!showSummary)}
+            onClick={() => navigate("/summary", {
+              state: {monthlyData, currency}
+            })}
             className="generate-summary-button"
             style={{ marginTop: "1rem" }}
           >
-            {showSummary ? "Hide Summary" : "📊 Generate Summary"}
+            📊 Generate Summary
           </button>
-
-          {showSummary && (
-            <div className="summary-section">
-              <div className="monthly-comparison-selectors">
-                <label>Select Month A:</label>
-                <select value={monthA} onChange={(e) => setMonthA(e.target.value)}>
-                  <option value="">-- Choose Month --</option>
-                  {Object.keys(monthlyData).map(month => (
-                    <option key={month} value={month}>{month}</option>
-                  ))}
-                </select>
-
-                <label style={{ marginLeft: "1rem" }}>Select Month B:</label>
-                <select value={monthB} onChange={(e) => setMonthB(e.target.value)}>
-                  <option value="">-- Choose Month --</option>
-                  {Object.keys(monthlyData).map(month => (
-                    <option key={month} value={month}>{month}</option>
-                  ))}
-                </select>
-              </div>
-
-              {monthA && monthB && (
-                <div className="comparison-bar-chart">
-                  <h4>📊 Comparing {monthA} vs {monthB}</h4>
-                  <Bar data={barComparisonData} />
-                </div>
-              )}
-            </div>
-          )}
 
           {monthlyTotal !== null && (
             <button onClick={exportToExcel} style={{ marginTop: "1rem" }}>
