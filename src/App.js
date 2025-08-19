@@ -25,7 +25,7 @@ function App() {
     if (!monthlyTotal) return;
     const rows = Object.entries(categoryTotals).map(([category, amount]) => ({
       Category: category,
-      Amount: `{currency}${amount.toFixed(2)}`,
+      Amount: `${currency}${amount.toFixed(2)}`,
     }));
     rows.push({ Category: "Total", Amount: `${currency}${monthlyTotal.toFixed(2)}` });
     const worksheet = XLSX.utils.json_to_sheet(rows);
@@ -180,7 +180,7 @@ function App() {
                 <button onClick={() => removeCategory(cat)}>🗑️</button>
               </h3>
               {items.map((val, idx) => (
-                <div className="input-with-currency" key={idx} data-currency={currency}>
+                <div className="input-with-currency" key={idx}>
                   <input
                     type="number"
                     placeholder={`Item ${idx + 1}`}
