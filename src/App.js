@@ -25,7 +25,7 @@ function App() {
     if (!monthlyTotal) return;
     const rows = Object.entries(categoryTotals).map(([category, amount]) => ({
       Category: category,
-      Amount: `${currency}${amount.toFixed(2)}`,
+      Amount: `{currency}${amount.toFixed(2)}`,
     }));
     rows.push({ Category: "Total", Amount: `${currency}${monthlyTotal.toFixed(2)}` });
     const worksheet = XLSX.utils.json_to_sheet(rows);
