@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
-import { useNavigate } from "react-router-dom";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import "./App.css";
@@ -19,7 +18,7 @@ function App() {
   const [lastAdded, setLastAdded] = useState({ category: null, index: null });
   const [currency, setCurrency] = useState("$");
   const [monthlyData, setMonthlyData] = useState({});
-  const navigate = useNavigate();
+  
 
   const exportToExcel = () => {
     if (!monthlyTotal) return;
@@ -227,16 +226,7 @@ function App() {
             </div>
           )}
 
-          <button
-            onClick={() => navigate("/summary", {
-              state: { monthlyData, currency }
-            })}
-            className="generate-summary-button"
-            style={{ marginTop: "1rem" }}
-          >
-            📊 Generate Summary
-          </button>
-
+         
           {monthlyTotal !== null && (
             <button onClick={exportToExcel} style={{ marginTop: "1rem" }}>
               📥 Export to Excel

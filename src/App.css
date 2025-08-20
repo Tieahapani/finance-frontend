@@ -273,14 +273,7 @@ input[type="text"],
     width: 100%;
   }
 
-  .month-comparison-selector{
-    flex-direction: column; 
-    align-items: flex-start; 
-    gap: 0.5rem; 
-  }
-  .month-comparison-selectors select {
-    width: 100%; 
-  }
+ 
 }
 
 .input-with-currency {
@@ -326,18 +319,4 @@ input[type="text"],
   font-size: 1rem;
 }
 
-.month-comparison-selectors{
-  margin-top: 1rem; 
-  display: flex; 
-  align-items: center; 
-  gap: 1rem; 
-  flex-wrap: wrap; 
-}
 
-.comparison-bar-chart {
-  margin-top: 2rem; 
-}
-
-.comparison-bar-chart canvas {
-  max-width: 100%
-}
