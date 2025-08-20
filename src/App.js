@@ -17,8 +17,6 @@ function App() {
   const inputRefs = useRef({});
   const [lastAdded, setLastAdded] = useState({ category: null, index: null });
   const [currency, setCurrency] = useState("$");
-  
-  
 
   const exportToExcel = () => {
     if (!monthlyTotal) return;
@@ -30,7 +28,9 @@ function App() {
     const worksheet = XLSX.utils.json_to_sheet(rows);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Budget");
-    const monthStr = selectedDate.toLocaleString("default", { month: "long", year: "numeric" }).replace(" ", "-");
+    const monthStr = selectedDate
+      .toLocaleString("default", { month: "long", year: "numeric" })
+      .replace(" ", "-");
     const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
     const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
     saveAs(blob, `Budget-${monthStr}.xlsx`);
@@ -98,22 +98,18 @@ function App() {
       for (const [cat, items] of Object.entries(categories)) {
         totals[cat] = items.reduce((sum, v) => sum + (parseFloat(v) || 0), 0);
       }
-      const monthKey = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, "0")}`;
+      const monthKey = `${selectedDate.getFullYear()}-${String(
+        selectedDate.getMonth() + 1
+      ).padStart(2, "0")}`;
       const res = await fetch(`${BASE}/calculate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ month: monthKey, categories: totals }),
       });
       const data = await res.json();
+
       if (res.ok) {
         setMonthlyTotal(data.total);
-        setMonthlyData(prev => ({
-          ...prev,
-          [monthKey]: {
-            categories: totals,
-            total: data.total
-          }
-        }));
         setError(null);
       } else {
         setError(data.error || "Something went wrong");
@@ -222,11 +218,11 @@ function App() {
 
           {monthlyTotal !== null && (
             <div className="result">
-              ✅ {fmtMonth(selectedDate)} Total: {currency}{monthlyTotal}
+              ✅ {fmtMonth(selectedDate)} Total: {currency}
+              {monthlyTotal}
             </div>
           )}
 
-         
           {monthlyTotal !== null && (
             <button onClick={exportToExcel} style={{ marginTop: "1rem" }}>
               📥 Export to Excel
