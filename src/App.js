@@ -17,7 +17,7 @@ function App() {
   const inputRefs = useRef({});
   const [lastAdded, setLastAdded] = useState({ category: null, index: null });
   const [currency, setCurrency] = useState("$");
-  const [monthlyData, setMonthlyData] = useState({});
+  
   
 
   const exportToExcel = () => {
