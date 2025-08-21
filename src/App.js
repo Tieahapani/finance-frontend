@@ -5,7 +5,7 @@ import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import "./App.css";
 
-const BASE = process.env.REACT_APP_API_BASE_URL || "http://localhost:5001";
+const BASE = process.env.REACT_APP_API_BASE || "http://localhost:5001";
 
 function App() {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -34,7 +34,13 @@ function App() {
     const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
     const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
     saveAs(blob, `Budget-${monthStr}.xlsx`);
-  };
+  }; 
+
+  useEffect(() => {
+
+    console.log("API BASE =", BASE);
+
+  }, []); 
 
   useEffect(() => {
     const totals = {};
@@ -52,6 +58,8 @@ function App() {
       setLastAdded({ category: null, index: null });
     }
   }, [lastAdded, categories]);
+
+  
 
   const handleItemChange = (category, idx, val) => {
     setCategories(prev => {
